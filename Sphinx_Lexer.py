@@ -95,7 +95,7 @@ t_Ellipsis=r'\.\.\.'
 
 t_Arrow=r'->'
 t_Question=r'\?'
-t_At=r'@'
+t_At=r'\@'
 t_Increment=r'\++'
 t_Decrement=r'--'
 
@@ -178,7 +178,7 @@ def t_error(t):
 lexer=lex.lex()
 
 #Testing it
-lexer.input("is it working 2010-09 := ? _ ")
+lexer.input("is it working 2010-09 := ? _ @")
 
 while True:
     tok = lexer.token()
