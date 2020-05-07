@@ -14,7 +14,7 @@ tokens=['Name','Character','Float','Integer','String','Digit',
 
         'MulEquals', 'PlusEquals','MinusEquals','DivEquals','Increment','Decrement','Modequals',
 
-        'Arrow','Question','LeftPar','RightPar','LeftBrac','RightBrac','LeftCurly','RightCurly','Comma','Period',
+        'Arrow','Question','LeftPar','RPAR','LeftBrac','RightBrac','LeftCurly','RightCurly','Comma','Period',
 
         'Semicolon','Colon', 'In','Let','For','While','If','Then','Else','To','True','False','Empty','Map','IS_NUMBER','IS_EMPTY',
 
@@ -80,7 +80,7 @@ t_AtEquals=r'@='
 
 #Delimiters
 t_LeftPar=r'\('
-t_RightPar=r'\)'
+t_RPAR= r'\)'
 t_LeftBrac=r'\['
 t_RightBrac=r'\]'
 t_LeftCurly=r'\{'
@@ -178,7 +178,7 @@ def t_error(t):
 lexer=lex.lex()
 
 #Testing it
-lexer.input("is it working 2010-09 := ? _ @")
+lexer.input("()is it working 2010-09 := ? _ @")
 
 while True:
     tok = lexer.token()
