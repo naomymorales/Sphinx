@@ -15,19 +15,19 @@ import Sphinx_Lexer as Sphinx_Lexer
 Parser_Rules=Lark('''
 
 
-           single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE
-           file_input: (NEWLINE | stmt)* ENDMARKER
-           eval_input: testlist NEWLINE* ENDMARKER
-           decorator: "@" dotted_name [ "(" [arglist] ")" ] NEWLINE
+           single_input: "NEWLINE" | simple_stmt | compound_stmt "NEWLINE"
+           file_input: ("NEWLINE" | stmt)* "ENDMARKER"
+           eval_input: testlist "NEWLINE"* "ENDMARKER"
+           decorator: "@" dotted_name [ "(" [arglist] ")" ] "NEWLINE"
            decorators: decorator+
            decorated: decorators (classdef | funcdef)
-           funcdef: "def" NAME parameters ":" suite
+           funcdef: "def" "NAME" parameters ":" suite
            parameters: "(" [varargslist] ")"
-           varargslist: ((fpdef ["=" test] ",")*("*" NAME ["," "**" NAME] | "**" NAME) | fpdef ["=" test] ("," fpdef ["=" test])* [","])
-           fpdef: NAME | "(" fplist ")"
+           varargslist: ((fpdef ["=" test] ",")*("*" "NAME" ["," "**" "NAME"] | "**" "NAME") | fpdef ["=" test] ("," fpdef ["=" test])* [","])
+           fpdef: "NAME" | "(" fplist ")"
            fplist: fpdef ("," fpdef)* [","]
            stmt: simple_stmt | compound_stmt
-           simple_stmt: small_stmt (";" small_stmt)* [";"] NEWLINE
+           simple_stmt: small_stmt (";" small_stmt)* [";"] "NEWLINE"
            small_stmt: (expr_stmt | print_stmt  | del_stmt | pass_stmt | flow_stmt |import_stmt | global_stmt | exec_stmt | assert_stmt)
            expr_stmt: testlist (augassign (yield_expr|testlist)|("=" (yield_expr|testlist))*)
            augassign: ("+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=" | "**=" | "//=")
@@ -44,12 +44,12 @@ Parser_Rules=Lark('''
            import_stmt: import_name | import_from
            import_name: "import" dotted_as_names
            import_from: ("from" ("."* dotted_name | "."+) "import" ("*" | "(" import_as_names ")" | import_as_names))
-           import_as_name: NAME ["as" NAME]
-           dotted_as_name: dotted_name ["as" NAME]
+           import_as_name: "NAME" ["as" "NAME"]
+           dotted_as_name: dotted_name ["as" "NAME"]
            import_as_names: import_as_name ("," import_as_name)* [","]
            dotted_as_names: dotted_as_name ("," dotted_as_name)*
-           dotted_name: NAME ("." NAME)*
-           global_stmt: "global" NAME ("," NAME)*
+           dotted_name: "NAME" ("." "NAME")*
+           global_stmt: "global" "NAME" ("," "NAME")*
            exec_stmt: "exec" expr ["in" test ["," test]]
            assert_stmt: "assert" test ["," test]
              
@@ -62,7 +62,7 @@ Parser_Rules=Lark('''
            with_item: test ["as" expr]              
  
            except_clause: "except" [test [("as" | ",") test]]
-           suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT
+           suite: simple_stmt | "NEWLINE" "INDENT" stmt+ "DEDENT"
            testlist_safe: old_test ["," old_test+ [","]]
            old_test: or_test | old_lambdef
            old_lambdef: "lambda" [varargslist] ":" old_test
@@ -80,18 +80,18 @@ Parser_Rules=Lark('''
            term: factor (("*"|"/"|"%"|"//") factor)*
            factor: ("+"|"-"|"~") factor | power
            power: atom trailer* ["**" factor]
-           atom: ("(" [yield_expr|testlist_comp] ")"|"[" [listmaker] "]"|"{" [dictorsetmaker] "}"|"`" testlist1 "`"|NAME | NUMBER | STRING+)                                          
+           atom: ("(" [yield_expr|testlist_comp] ")"|"[" [listmaker] "]"|"{" [dictorsetmaker] "}"|"`" testlist1 "`"|"NAME" | "NUMBER" | "STRING"+)                                          
            listmaker: test ( list_for | ("," test)* [","] )
            testlist_comp: test ( comp_for | ("," test)* [","] )
            lambdef: "lambda" [varargslist] ":" test
-           trailer: "(" [arglist] ")" | "[" subscriptlist "]" | "." NAME
+           trailer: "(" [arglist] ")" | "[" subscriptlist "]" | "." "NAME"
            subscriptlist: subscript ("," subscript)* [","]
            subscript: "." "." "." | test | [test] ":" [test] [sliceop]
            sliceop: ":" [test]
            exprlist: expr ("," expr)* [","]
            testlist: test ("," test)* [","]
            dictorsetmaker: ( (test ":" test (comp_for | ("," test ":" test)* [","]))|(test (comp_for | ("," test)* [","])) )
-           classdef: "clas" NAME ["(" [testlist] ")"] ":" suite
+           classdef: "clas" "NAME" ["(" [testlist] ")"] ":" suite
            arglist: (argument ",")* (argument [","]|"*" test ("," argument)* ["," "**" test] |"**" test)
            argument: test [comp_for] | test "=" test
            list_iter: list_for | list_if
@@ -101,24 +101,24 @@ Parser_Rules=Lark('''
            comp_for: "for" exprlist "in" or_test [comp_iter]
            comp_if: "if" old_test [comp_iter]
            testlist1: test ("," test)*
-           encoding_decl: NAME
+           encoding_decl: "NAME"
            yield_expr: "yield" [testlist]
               
 
                       
               
               %import common.WS
-              %ignore WS''', start="expression")
+              %ignore WS''', start="single_input")
 
 #Testing parser
 
-Parser_Rules.parse('# cache')
-#Parser_Rules.parse("I am empty on the inside 100 >=0")
-
-#Parser_Rules.parse('''There was a frog named Froggie. Froggie was 6 years old and he lived in POND 3098-8.''')
-
-
-
+# Parser_Rules.parse('# cache')
+# Parser_Rules.parse("I am empty on the inside 100 >=0")
+#
+# Parser_Rules.parse('''There was a frog named Froggie. Froggie was 6 years old and he lived in POND 3098-8.''')
+#
+#
+#
 # Parser_Rules.parse('''
 #  let
 #   f := map n to if n = 0 then 1 else n * f(n - 1);
