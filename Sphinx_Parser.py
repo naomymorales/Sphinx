@@ -1,7 +1,7 @@
 from lark import Lark
 
 from Sphinx_Lexer import tokens
-#import ply.yacc as yacc
+
 import Sphinx_Lexer as Sphinx_Lexer
 
 
@@ -10,10 +10,14 @@ import Sphinx_Lexer as Sphinx_Lexer
 #PYTHONS GRAMMAR:  https://docs.python.org/3/reference/grammar.html
 
 
-
-
+#We must define que NAME is composed of characters o characters and digits
+#Also necesitamos decir como se hacen variables;como se llaman example p1=("string",1), al menos que esto ya este.
+# We must add how to do comments, y que pasa cuando queremos hacer operaciones matematicas como 8+8
 Parser_Rules=Lark('''
-
+           character:/[a-zA-z_]/|"?"|"_"
+           digit:/[0-9]/
+           delimiters:"("|")"|","|";"|"["|"]"|"{"|"}"|":"
+           operators:":="|"+"|"-"|"*"|"~"|"/"|"="|">="|"&"|"|"|"!="|"<"|">"|"<="
 
            single_input: "NEWLINE" | simple_stmt | compound_stmt "NEWLINE"
            file_input: ("NEWLINE" | stmt)* "ENDMARKER"
@@ -112,7 +116,7 @@ Parser_Rules=Lark('''
 
 #Testing parser
 
-# Parser_Rules.parse('# cache')
+Parser_Rules.parse("Oh my")
 # Parser_Rules.parse("I am empty on the inside 100 >=0")
 #
 # Parser_Rules.parse('''There was a frog named Froggie. Froggie was 6 years old and he lived in POND 3098-8.''')

@@ -5,7 +5,7 @@
 
 import ply.lex as lex
 
-tokens = ['Name', 'Character', 'Float', 'Integer', 'String', 'Digit', 'Plus', 'Minus', 'Mult', 'Div', 'NEWLINE',
+tokens = ['NAME', 'Character', 'Float', 'Integer', 'String', 'Digit', 'Plus', 'Minus', 'Mult', 'Div', 'NEWLINE',
           'Modulo', 'OR', 'AND', 'Not', 'Equals', 'Less', 'Greater', 'Less_Equals', 'Greater_Equals', 'Not_Equals',
           'MulEquals', 'PlusEquals', 'MinusEquals', 'DivEquals', 'Increment', 'Decrement', 'Modequals',
           'Arrow', 'Question', 'LeftPar', 'RPAR', 'LeftBrac', 'RightBrac', 'LeftCurly', 'RightCurly', 'Comma', 'Period',
@@ -144,7 +144,7 @@ def t_Name(t):
     if t.value in tokens:
         t.type = tokens[t.value]
     else:
-        t.type = 'Name'
+        t.type = 'NAME'
     return t
 
 
