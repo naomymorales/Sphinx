@@ -508,7 +508,7 @@ def p_error(p):
     else:
         print("Syntax error at EOF")
 
-
+#Parser Run
 import ply.yacc as yacc
 
 yacc.yacc()
