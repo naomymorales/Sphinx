@@ -336,7 +336,7 @@ def p_result_factorial(p):
 #     if p[2] is not None and p[4] is not None:
 #         x = p[2]
 #         y = p[4]
-#         p[0] = Sphinx_Lexer.Cartersian_To_Polar(x, y)
+#         p[0] = Math_Functions_V2.Cartersian_To_Polar(x, y)
 #     else:
 #         pass
 
@@ -346,10 +346,10 @@ def p_result_PolarToCart(p):
     if p[2] is not None and p[4] is not None:
         x = p[2]
         y = p[4]
-        if Sphinx_Lexer.Cartersian_To_Polar():
-            p[0] = Sphinx_Lexer.Cartersian_To_Polar(x,y)
-        elif Sphinx_Lexer.Polar_To_Cartersian():
-            p[0] = Sphinx_Lexer.Polar_To_Cartersian(x,y)
+        if Math_Functions_V2.Cartersian_To_Polar():
+            p[0] = Math_Functions_V2.Cartersian_To_Polar(x,y)
+        elif Math_Functions_V2.Polar_To_Cartersian():
+            p[0] = Math_Functions_V2.Polar_To_Cartersian(x,y)
     else:
         pass
 
@@ -358,10 +358,10 @@ def p_result_DegToRads(p):
     '''result : FLOAT'''
     if p[1] is not None:
         x = p[1]
-        if Sphinx_Lexer.Degrees_To_Radians():
-            p[0] = Sphinx_Lexer.Degrees_To_Radians(x)
-        elif Sphinx_Lexer.Radians_To_Degrees():
-            p[0] = Sphinx_Lexer.Radians_To_Degrees(x)
+        if Math_Functions_V2.Degrees_To_Radians():
+            p[0] = Math_Functions_V2.Degrees_To_Radians(x)
+        elif Math_Functions_V2.Radians_To_Degrees():
+            p[0] = Math_Functions_V2.Radians_To_Degrees(x)
     else:
         pass
 
@@ -370,7 +370,7 @@ def p_result_DegToRads(p):
 #     '''result : FLOAT'''
 #     if p[1] is not None:
 #         rad = p[1]
-#         p[0] = Sphinx_Lexer.Degrees_To_Radians(rad)
+#         p[0] = Math_Functions_V2.Degrees_To_Radians(rad)
 #     else:
 #         pass
 
@@ -380,7 +380,7 @@ def p_result_magnitude(p):
     if p[1] is not None and p[2] is not None:
         x = p[1]
         y = p[2]
-        p[0] = Sphinx_Lexer.Magnitude(x, y)
+        p[0] = Math_Functions_V2.Magnitude(x, y)
     else:
         pass
 
@@ -391,7 +391,7 @@ def p_result_MagnitudeOfThree(p):
         x = p[1]
         y = p[2]
         z = p[3]
-        p[0] = Sphinx_Lexer.Magnitude(x, y, z)
+        p[0] = Math_Functions_V2.Magnitude(x, y, z)
     else:
         pass
 
@@ -403,7 +403,7 @@ def p_result_DistanceBetweenTwo(p):
         y1 = p[2]
         x2 = p[3]
         y2 = p[4]
-        p[0] = Sphinx_Lexer.Distance_Between_Two_Points(x1, y1, x2, y2)
+        p[0] = Math_Functions_V2.Distance_Between_Two_Points(x1, y1, x2, y2)
     else:
         pass
 
@@ -416,11 +416,11 @@ def p_expression_product(p):
     highBound = p[5]
     eq1 = str(p[7])
     if s.find('^') != -1:
-        eq = Sphinx_Lexer.formateq(eq1)
+        eq = Math_Functions_V2.formateq(eq1)
     else:
         eq = str(eq1)
     if lowerBound is not None and highBound is not None and p[7] is not None:
-        p[0] = Sphinx_Lexer.productnotation(eq, lowerBound, highBound, Sphinx_Lexer.symbols('x'))
+        p[0] = Math_Functions_V2.productnotation(eq, lowerBound, highBound, Math_Functions_V2.symbols('x'))
     else:
         pass
 
@@ -504,9 +504,9 @@ def p_expression_name(p):
 
 def p_error(p):
     if p:
-        print("Syntax error at '%s'" % p.value)
+        print("There is a syntax error at '%s'" % p.value)
     else:
-        print("Syntax error at EOF")
+        print("There is a syntax error at EOF")
 
 #Parser Run
 import ply.yacc as yacc
@@ -515,7 +515,7 @@ yacc.yacc()
 
 while 1:
     try:
-        s = raw_input('CASOLUS > ')
+        s = raw_input('Sphinx > ')
     except EOFError:
         break
     if not s:
