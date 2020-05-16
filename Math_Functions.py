@@ -1,4 +1,8 @@
+#@authors: Anel Martinez, Naomy Morales, Julibert Diaz, Angel Hernandez
+#Sphinx Programming Language
+
 import math
+import numpy as np
 
 def Cartersian_To_Polar(x_Coordinate, y_Coordinate):
     x = x_Coordinate

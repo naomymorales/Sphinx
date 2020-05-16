@@ -1,3 +1,6 @@
+#@authors: Anel Martinez, Naomy Morales, Julibert Diaz, Angel Hernandez
+#Sphinx Programming Language
+
 import sys
 import math
 import Math_Functions_V2
@@ -375,7 +378,7 @@ yacc.yacc()
 
 while 1:
     try:
-        s = raw_input('CASOLUS > ')
+        s = raw_input('Sphinx > ')
     except EOFError:
         break
     if not s:
