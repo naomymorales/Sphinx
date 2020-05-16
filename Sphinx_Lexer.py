@@ -1,179 +1,149 @@
-# Sphinx Language
-# Authors: Julibert Diaz, Angel Hernandez, Anel Martinez, and Naomy Morales
+import string
 
-# Lexer for Sphinx
-
-import ply.lex as lex
-
-tokens = ['Name', 'Character', 'Float', 'Integer', 'String', 'Digit', 'Plus', 'Minus', 'Mult', 'Div', 'NEWLINE',
-          'Modulo', 'OR', 'AND', 'Not', 'Equals', 'Less', 'Greater', 'Less_Equals', 'Greater_Equals', 'Not_Equals',
-          'MulEquals', 'PlusEquals', 'MinusEquals', 'DivEquals', 'Increment', 'Decrement', 'Modequals',
-          'Arrow', 'Question', 'LeftPar', 'RPAR', 'LeftBrac', 'RightBrac', 'LeftCurly', 'RightCurly', 'Comma', 'Period',
-          'Semicolon', 'Colon', 'In', 'Let', 'For', 'While', 'If', 'Then', 'Else', 'To', 'True', 'False', 'Empty',
-          'Map', 'IS_NUMBER', 'IS_EMPTY', 'FUNCTION', 'List', 'IS_CONS', 'Cons', 'First', 'Append', 'Rest', 'Indent',
-          'Dedent', 'Circumflex', 'LeftShift', 'RightShift', 'DoubleStar', 'AndEquals', 'OrEquals', 'CirEqual',
-          'LeftShiftEqual', 'RightShiftEqual', 'Doublestar_Equals', 'DoubleSlash', 'DoubleSlashEquals', 'At',
-          'AtEquals', 'Ellipsis', 'ColonEqual', 'Comment', 'None', 'Await', 'Break', 'Class', 'As', 'Assert', 'Elif',
-          'Async', 'Continue', 'Def', 'Del', 'Except', 'Import', 'Try', 'Finally', 'Global', 'IS', 'From', 'Lambda',
-          'Pass', 'Raise', 'Return', 'With']
-
-# Whitespace
-t_ignore = r' '
-
-# Comments
-t_Comment = r'\#'
-
-# Types
-t_Integer = r'\d+([uU]|[1L]|[uU][1L]|[1L][uU])?'
-t_Float = r'((\d+)(\.\d+)(e(\+|-)?(\d+))?|(\d+)e(\+|-)?(/d+))([1L]|[fF])?'
-t_String = r'\"([^\\\n]|(\\.))*?\"'
-
-# Operators
-t_Plus = r'\+'
-t_Minus = r'-'
-t_Mult = r'\*'
-t_Div = r'/'
-t_Modulo = r'%'
-t_OR = r'\|'
-t_AND = r'&'
-t_Not = r'~'
-t_Circumflex = r'\^'
-t_Less = r'<'
-t_Greater = r'>'
-t_Less_Equals = r'<='
-t_Greater_Equals = r'>='
-t_Not_Equals = r'!='
-t_LeftShift = r'<<'
-t_RightShift = r'>>'
-t_DoubleStar = r'\*\*'
-t_DoubleSlash = r'//'
-
-# Assignment
-t_Equals = '='
-t_MulEquals = r'\*='
-t_PlusEquals = r'\+='
-t_MinusEquals = r'-='
-t_DivEquals = r'/='
-t_Modequals = r'%='
-t_AndEquals = r'&='
-t_OrEquals = r'\|='
-t_CirEqual = r'^='
-t_LeftShiftEqual = r'<<='
-t_RightShiftEqual = r'>>='
-t_Doublestar_Equals = r'\*\*='
-t_DoubleSlashEquals = r'//='
-t_ColonEqual = r':='
-t_AtEquals = r'@='
-
-# Delimiters
-t_LeftPar = r'\('
-t_RPAR = r'\)'
-t_LeftBrac = r'\['
-t_RightBrac = r'\]'
-t_LeftCurly = r'\{'
-t_RightCurly = r'\}'
-t_Comma = r','
-t_Period = r'\.'
-t_Semicolon = r';'
-t_Colon = r':'
-t_Ellipsis = r'\.\.\.'
-
-# Other
-
-t_Arrow = r'->'
-t_Question = r'\?'
-t_At = r'\@'
-t_Increment = r'\++'
-t_Decrement = r'--'
-
-# Reserved
-t_None = r'None'
-t_Await = r'await'
-t_Break = r'break'
-t_Class = r'class'
-t_As = r'as'
-t_Assert = r'assert'
-t_Async = r'async'
-t_Continue = r'continue'
-t_Def = r'def'
-t_Del = r'del'
-t_Elif = r'elif'
-t_Except = r'except'
-t_Try = r'try'
-t_Finally = r'finally'
-t_From = r'from'
-t_Global = r'global'
-t_Import = r'import'
-t_IS = r'is'
-t_Lambda = r'lambda'
-t_Pass = r'pass'
-t_Raise = 'raise'
-t_Return = 'return'
-t_With = 'with'
-
-t_Let = r'let'
-t_In = r'in'
-t_For = r'for'
-t_While = r'while'
-t_Map = r'map'
-t_If = r'if'
-t_Then = r'then'
-t_Else = 'else'
-t_To = 'to'
-t_Empty = 'empty'
-t_True = r'true'
-t_False = r'false'
-t_IS_NUMBER = r'number?'
-t_FUNCTION = r'function?'
-t_List = r'list?'
-t_IS_EMPTY = r'list?'
-t_IS_CONS = r'cons?'
-t_Cons = r'cons'
-t_First = r'first'
-t_Rest = r'rest'
+from sympy import *
+import numpy as np
+import math
 
 
-def t_Character(t):
-    r'[a-z A-z_]'
-    t.type = 'Character'
-    return t
 
 
-def t_Name(t):
-    r'[A-Za-z_][A-Za-z0-9_]*'
-    if t.value in tokens:
-        t.type = tokens[t.value]
+
+def Cartersian_To_Polar(x_Coordinate, y_Coordinate):
+    x = x_Coordinate
+    y = y_Coordinate
+    r = math.sqrt(x * x + y * y)
+    theta = math.atan2(y, x)
+    return r, theta
+
+def Polar_To_Cartersian(r_Coordenate, theta_Coordenate):
+    r = r_Coordenate
+    theta = theta_Coordenate
+    x = r * math.cos(theta)
+    y = r * math.sin(theta)
+    return x, y
+
+def Degrees_To_Radians(degrees):
+    radians = degrees * (math.pi/180)
+    return radians
+
+def Radians_To_Degrees(radians):
+    degrees = radians * (180/math.pi)
+    return degrees
+
+def Magnitude(x, y):
+    return math.sqrt((x * x) + (y * y))
+
+def Magnitude_With_3_Variables(x, y, z):
+    return math.sqrt((x * x) + (y * y) + (z * z))
+
+def Distance_Between_Two_Points(x1, y1, x2, y2):
+    return math.sqrt(math.pow((x2 - x1), 2) + math.pow((y2 - y1), 2))
+
+def Polynomial(a, b, c, x):
+    return np.polyval((a, b, c), x)
+
+
+def Quadratic(a, b, c):
+    inerSQRT = (b * b) - 4 * a * c
+    result1 = (-b + math.sqrt(inerSQRT)) // (2 * a)
+    result2 = (-b - math.sqrt(inerSQRT)) // (2 * a)
+    return result1, result2
+
+
+def Summation(n, a, b, c):
+    # np.polyval([a, b, c], x)
+    # np.polyval([3,0,1], 5)
+    # 3 * 5**2 + 0 * 5**1 + 1
+    summation = 0
+    for i in range(1, n + 1):
+        summation += Polynomial((a, b, c), i)  # shorthand for summation = summation + i
+    return summation
+
+
+def Factorial(n):
+    if n == 1:
+        return 1
     else:
-        t.type = 'Name'
-    return t
+        return Factorial(n - 1) * n
 
 
-def t_DIGIT(t):
-    r'[0-9]'
-    t.type = 'Digit'
-    return t
+def Volume(shape, a, b, c):
+    if shape.tolower() == "sphere":
+        return (4 * math.pi * a**3)/3
+    elif shape.tolower() == "cone":
+        return (math.pi * a**2 * b)/3
+    elif shape.tolower() == "cube":
+        return a**3
+    elif shape.tolower() == "cylinder":
+        return math.pi * a**2 *b
+    elif shape.tolower() == "square pyramid":
+        return (a**2 * b)/3
+    elif shape.tolower() == "tube":
+        return (math.pi * (a**2 - b**2))/4
+    elif shape.tolower() == "capsule":
+        return (4 * math.pi * a**3)/3 + (math.pi * a**2 * b)
+
+# sphere, a is radius
+# cone, a is base radius, b is height
+# cube, a is edge length
+# cylinder, a is base radius, b is height
+# square pyramid, a is base edge, b is height
+# tube, a is outer diameter, b is inner diameter, c is length
+# square capsule, a is base radius, b is height
 
 
-def t_NEWLINE(t):
-    r'\n+'
-    t.lexer.lineno += len(t.value)
+def SurfaceArea(shape, a, b, c):
+    if shape.tolower() == "ball":
+        return 4 * math.pi * a**2
+    elif shape.tolower() == "cone":
+        return (math.pi * a) + (math.pi * math.sqrt(a**2 + b**2))
+    elif shape.tolower() == "cube":
+        return 6 * a ** 2
+    elif shape.tolower() == "cylinder":
+        return (math.pi * a ** 2) * 2 + (2 * math.pi * a * b)
+    elif shape.tolower() == "square pyramid":
+        return (a ** 2) + (2 * a * math.sqrt((a / 2) ** 2 + b ** 2))
+    elif shape.tolower() == "tube":
+        return (2 * math.pi * (a**2 - b**2)) + (2 * math.pi * c * (a + b))
+    elif shape.tolower() == "capsule":
+        return (2 * math.pi * a ** 2) * 2 + (2 * math.pi * a * b)
+# ball, a is radius
+# cone, a is base radius, b is height
+# cube, a is length
+# cylinder, a is radius, b is height
+# square pyramid, a is base edge, b is height
+# tube, a is big radius, b is small radius, c is height
+# square capsule, a is base radius, b is height
 
-
-# Error detection
-def t_error(t):
-    print('Illegal character')
-    t.lexer.skip(1)
-
-
-# Builds lexer
-
-lexer = lex.lex()
-
-# Testing it
-lexer.input("()is it working 2010-09 := ? _ @")
-
-while True:
-    tok = lexer.token()
-    if not tok:
-        break
-    print(tok)
+'''
+print("derivations testing\n")
+# parameters: equation, *symbols
+print(newderivative('1/(x**2)'))
+# If there's more than one variable in the exp, the variable(s) of differentiation must be supplied to differentiate
+print(newderivative('4*x**2*y**2', symbols('x')))
+print('\nIntegrating testing\n')
+# parameters: equation, *symbols
+print('indefinite integral ', newintegration('2',symbols('x')))
+# parameters: equation, *tuple(symbol, lowerbound, upperbound)
+print('definite integral ', newintegration('2*x', (symbols('x'), 0, 2)))
+# If the integrand contains more than one free symbol, an integration variable should be supplied explicitly
+# parameters: equation, *symbols
+print('indefinite integral ', newintegration('2*x**2*y + 2*x*y**2', symbols('x'), symbols('y')))
+# parameters: equation, *tuple(symbol, lowerbound, upperbound)
+print('definite integral ', newintegration('2*x**2*y + 2*x*y**2', (symbols('x'), 0, 2), (symbols('y'), 0, 2)))
+# variable to be replaced must be initialized as a symbol and sent as a parameter for these methods to work
+# parameters: equation, lowerbound, upperbound, symbol
+print('\ntesting summation\n')
+print(summation('x**2', 0, 6, symbols('x')))
+print('\ntesting product notation\n')
+print(productnotation('x**2', 1, 6, symbols('x')))
+print('\ntesting limits\n')
+# parameters: equation, x, x0, side to evaluate
+print(limits('1/x', symbols('x'), 0, '+'))
+print(limits('1/x', symbols('x'), 'oo'))
+# testing string replacing for exponent
+print('\ntesting formatting\n')
+str1 = "4x^2"
+print(str1.replace("^", "**"))
+print(formateq("4x^2"))
+'''

@@ -1,141 +1,383 @@
-from lark import Lark
+import sys
+import math
+import Sphinx_Lexer
 
-from Sphinx_Lexer import tokens
-#import ply.yacc as yacc
-import Sphinx_Lexer as Sphinx_Lexer
+sys.path.insert(0, "../..")
 
+if sys.version_info[0] >= 3:
+    raw_input = input
 
-#Sphinx Language Parser
-#commit try
-#PYTHONS GRAMMAR:  https://docs.python.org/3/reference/grammar.html
-
-
+#LEXER ANALYSIS
 
 
-Parser_Rules=Lark('''
+reserved = {
+    'integral': 'INTEGRAL',
+    'from': 'FROM',
+    'to': 'TO',
+    'derivation': 'DERIVATIVE',
+    'limit': 'LIMIT',
+    'when': 'WHEN',
+    'of': 'OF',
+    'oo': 'INFINITY',
+    'summation': 'SUMMATION',
+    'product': 'PRODUCT',
+    'sin': 'SIN',
+    'cos': 'COS',
+    'tan': 'TAN',
+    'varlist' : 'PRINTLIST',
+}
+
+# Tokens
+
+tokens = [
+    'VAR',
+    'FLOAT',
+    'INT',
+    'PLUS',
+    'MINUS',
+    'TIMES',
+    'DIVIDE',
+    'POWER',
+    'EQUALS',
+    'LPAREN',
+    'RPAREN',
+    'GOES',
+    'X',
+    ] + list(reserved.values())
+
+# set Variables format
+# Set tokens representation
+t_PLUS = r'\+'
+t_MINUS = r'\-'
+t_TIMES = r'\*'
+t_DIVIDE = r'\/'
+t_POWER = r'\^'
+t_EQUALS = r'\='
+t_LPAREN = r'\('
+t_RPAREN = r'\)'
+t_GOES = r'\->'
+t_X = r'[x]'
+t_ignore = " \t"
 
 
-           single_input: "NEWLINE" | simple_stmt | compound_stmt "NEWLINE"
-           file_input: ("NEWLINE" | stmt)* "ENDMARKER"
-           eval_input: testlist "NEWLINE"* "ENDMARKER"
-           decorator: "@" dotted_name [ "(" [arglist] ")" ] "NEWLINE"
-           decorators: decorator+
-           decorated: decorators (classdef | funcdef)
-           funcdef: "def" "NAME" parameters ":" suite
-           parameters: "(" [varargslist] ")"
-           varargslist: ((fpdef ["=" test] ",")*("*" "NAME" ["," "**" "NAME"] | "**" "NAME") | fpdef ["=" test] ("," fpdef ["=" test])* [","])
-           fpdef: "NAME" | "(" fplist ")"
-           fplist: fpdef ("," fpdef)* [","]
-           stmt: simple_stmt | compound_stmt
-           simple_stmt: small_stmt (";" small_stmt)* [";"] "NEWLINE"
-           small_stmt: (expr_stmt | print_stmt  | del_stmt | pass_stmt | flow_stmt |import_stmt | global_stmt | exec_stmt | assert_stmt)
-           expr_stmt: testlist (augassign (yield_expr|testlist)|("=" (yield_expr|testlist))*)
-           augassign: ("+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=" | "**=" | "//=")
-                     
-           print_stmt: "print" ( [ test ("," test)* [","] ] | ">>" test [ ("," test)+ [","] ] )
-           del_stmt: "del" exprlist
-           pass_stmt: "pass"
-           flow_stmt: break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt
-           break_stmt: "break"
-           continue_stmt: "continue"
-           return_stmt: "return" [testlist]
-           yield_stmt: yield_expr
-           raise_stmt: "raise" [test ["," test ["," test]]]
-           import_stmt: import_name | import_from
-           import_name: "import" dotted_as_names
-           import_from: ("from" ("."* dotted_name | "."+) "import" ("*" | "(" import_as_names ")" | import_as_names))
-           import_as_name: "NAME" ["as" "NAME"]
-           dotted_as_name: dotted_name ["as" "NAME"]
-           import_as_names: import_as_name ("," import_as_name)* [","]
-           dotted_as_names: dotted_as_name ("," dotted_as_name)*
-           dotted_name: "NAME" ("." "NAME")*
-           global_stmt: "global" "NAME" ("," "NAME")*
-           exec_stmt: "exec" expr ["in" test ["," test]]
-           assert_stmt: "assert" test ["," test]
-             
-           compound_stmt: if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated
-           if_stmt: "if" test ":" suite ("elif" test ":" suite)* ["else" ":" suite]
-           while_stmt: "while" test ":" suite ["else" ":" suite]
-           for_stmt: "for" exprlist "in" testlist ":" suite ["else" ":" suite]
-           try_stmt: ("try" ":" suite((except_clause ":" suite)+["else" ":" suite]["finally" ":" suite] |"finally" ":" suite))
-           with_stmt: "with" with_item ("," with_item)*  ":" suite
-           with_item: test ["as" expr]              
- 
-           except_clause: "except" [test [("as" | ",") test]]
-           suite: simple_stmt | "NEWLINE" "INDENT" stmt+ "DEDENT"
-           testlist_safe: old_test ["," old_test+ [","]]
-           old_test: or_test | old_lambdef
-           old_lambdef: "lambda" [varargslist] ":" old_test
-           test: or_test ["if" or_test | "else" test] | lambdef
-           or_test: and_test ("or" and_test)*
-           and_test: not_test ("and" not_test)*
-           not_test: "not" not_test | comparison
-           comparison: expr (comp_op expr)*
-           comp_op: "<"|">"|"=="|">="|"<="|"<>"|"!="|"in"|"not" "in"|"is"|"is" "not"
-           expr: xor_expr ("|" xor_expr)*
-           xor_expr: and_expr ("^" and_expr)*
-           and_expr: shift_expr ("&" shift_expr)*
-           shift_expr: arith_expr (("<<"|">>") arith_expr)*
-           arith_expr: term (("+"|"-") term)*
-           term: factor (("*"|"/"|"%"|"//") factor)*
-           factor: ("+"|"-"|"~") factor | power
-           power: atom trailer* ["**" factor]
-           atom: ("(" [yield_expr|testlist_comp] ")"|"[" [listmaker] "]"|"{" [dictorsetmaker] "}"|"`" testlist1 "`"|"NAME" | "NUMBER" | "STRING"+)                                          
-           listmaker: test ( list_for | ("," test)* [","] )
-           testlist_comp: test ( comp_for | ("," test)* [","] )
-           lambdef: "lambda" [varargslist] ":" test
-           trailer: "(" [arglist] ")" | "[" subscriptlist "]" | "." "NAME"
-           subscriptlist: subscript ("," subscript)* [","]
-           subscript: "." "." "." | test | [test] ":" [test] [sliceop]
-           sliceop: ":" [test]
-           exprlist: expr ("," expr)* [","]
-           testlist: test ("," test)* [","]
-           dictorsetmaker: ( (test ":" test (comp_for | ("," test ":" test)* [","]))|(test (comp_for | ("," test)* [","])) )
-           classdef: "clas" "NAME" ["(" [testlist] ")"] ":" suite
-           arglist: (argument ",")* (argument [","]|"*" test ("," argument)* ["," "**" test] |"**" test)
-           argument: test [comp_for] | test "=" test
-           list_iter: list_for | list_if
-           list_for: "for" exprlist "in" testlist_safe [list_iter]
-           list_if: "if" old_test [list_iter]
-           comp_iter: comp_for | comp_if
-           comp_for: "for" exprlist "in" or_test [comp_iter]
-           comp_if: "if" old_test [comp_iter]
-           testlist1: test ("," test)*
-           encoding_decl: "NAME"
-           yield_expr: "yield" [testlist]
-              
+def t_VAR(t):
+    r'[a-wyzA-WYZ][a-zA-Z0-9_]*'
+    t.type = reserved.get(t.value, 'VAR')    # Check for reserved words
+    return t
 
-                      
-              
-              %import common.WS
-              %ignore WS''', start="single_input")
 
-#Testing parser
+# Set floating point structure
+#   number '.' number                   -> example. 12.34
+#   number '.' number 'e' '+/-' number  -> example. 12.34e+56 or 12.34E-56
+#   number 'e' '+/-' number             -> example. 12E+34 or 12e-34
+def t_FLOAT(t):
+    r'([0-9]+)?([.][0-9]+)([eE][+-]?[0-9]+)?'
+    t.value = float(t.value)
+    return t
 
-# Parser_Rules.parse('# cache')
-# Parser_Rules.parse("I am empty on the inside 100 >=0")
-#
-# Parser_Rules.parse('''There was a frog named Froggie. Froggie was 6 years old and he lived in POND 3098-8.''')
-#
-#
-#
-# Parser_Rules.parse('''
-#  let
-#   f := map n to if n = 0 then 1 else n * f(n - 1);
-# in
-#   let
-#     f := map n,m,k to if (n <= 0 & n >= 0)
-#                   | (n < 0 & n > 0 & n != 0) then number?
-#                                            else m / f(k + 1);
-#   in
-#      let x:=3;
-#          y:=4;
-#          z:=cons?(function?(x * ~y), cons(-arity(x)));
-#      in
-#         let x:=3;
-#             y:=4;
-#             z:=g();
-#         in
-#             (g(x,y,z))(empty?(true),list?(false),first(empty))
-#  '''
-# )
+
+# Set integer structure
+def t_INT(t):
+    r'[0-9]+'
+    t.value = int(t.value)
+    return t
+
+
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += t.value.count("\n")
+
+
+def t_COMMENT(t):
+    r'\#.*'
+    pass
+    # No return value. Token discarded
+
+
+def t_error(t):
+    print ("ERROR: Line %d: LEXER: Illegal character '%s' " % (t.lexer.lineno, t.value[0]))
+    t.lexer.skip(1)
+
+# Build the lexer
+import ply.lex as lex
+lex.lex()
+
+# Parsing rules and precedence
+precedence = (
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'TIMES', 'DIVIDE'),
+    ('left', 'POWER'),
+    ('right', 'UMINUS'),
+)
+
+# dictionary to store the variable name and value
+names = {}
+
+def p_print_var_list(p):
+    '''statement : PRINTLIST '''
+    if len(names) is not 0:
+        for k, v in names.items():
+            print(k, "=", v)
+    else:
+        print("No variables are in the system.")
+
+
+
+def p_statement_assign(p):
+    '''statement : VAR EQUALS expression
+                 | VAR EQUALS equation
+                 | VAR EQUALS result'''
+    if p[3] is None:
+        pass
+    else:
+        names[p[1]] = p[3]
+
+
+def p_statement_expr(p):
+    '''statement : expression
+                 | equation
+                 | result'''
+    if p[1] is None:
+        pass
+    else:
+        print(p[1])
+
+
+def p_expression_math(p):
+    '''expression : expression PLUS expression
+                  | expression MINUS expression
+                  | expression TIMES expression
+                  | expression DIVIDE expression
+                  | expression POWER expression'''
+    p1 = str(p[1])
+    p3 = str(p[3])
+    if p[2] == '+' and p[1] is not None and p[3] is not None:
+        if "x" in p1 or "x" in p3:
+            p[0] = str(p[1]) + str(p[2]) + str(p[3])
+        else:
+            p[0] = p[1] + p[3]
+    elif p[2] == '-' and p[1] is not None and p[3] is not None:
+        if "x" in p1 or "x" in p3:
+            p[0] = str(p[1]) + str(p[2]) + str(p[3])
+        else:
+            p[0] = p[1] - p[3]
+    elif p[2] == '*' and p[1] is not None and p[3] is not None:
+        if "x" in p1 or "x" in p3:
+            p[0] = str(p[1]) + str(p[2]) + str(p[3])
+        else:
+            p[0] = p[1] * p[3]
+    elif p[2] == '/' and p[1] is not None and p[3] is not None:
+        if "x" in p1 or "x" in p3:
+            p[0] = str(p[1]) + str(p[2]) + str(p[3])
+        else:
+            p[0] = p[1] / p[3]
+    elif p[2] == '^' and p[1] is not None and p[3] is not None:
+        if "x" in p1 or "x" in p3:
+            p[0] = str(p[1]) + str(p[2]) + str(p[3])
+        else:
+            p[0] = math.pow(p[1], p[3])
+
+
+def p_result_integral(p):
+    '''result : INTEGRAL OF expression
+                   | INTEGRAL OF equation'''
+
+    if s.find('^') != -1:
+        eq = Sphinx_Lexer.formateq(p[3])
+    else:
+        eq = str(p[3])
+    if p[3] is not None:
+        eq = (str(Sphinx_Lexer.newintegration(eq, Sphinx_Lexer.symbols('x'))))
+        eq = Sphinx_Lexer.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
+
+
+def p_result_definite_integral(p):
+    '''result : INTEGRAL FROM expression TO expression OF expression
+              | INTEGRAL FROM expression TO expression OF equation
+              | INTEGRAL FROM expression TO INFINITY OF expression
+              | INTEGRAL FROM expression TO INFINITY OF equation'''
+
+    lowerbound = str(p[3])
+    highbound = str(p[5])
+    eq1 = str(p[7])
+    if s.find('^') != -1:
+        eq = Sphinx_Lexer.formateq(eq1)
+    else:
+        eq = str(eq1)
+    if lowerbound is not None and highbound is not None and p[7] is not None:
+        eq = (str(Sphinx_Lexer.newintegration(eq, (Sphinx_Lexer.symbols('x'), lowerbound, highbound))))
+        eq = Sphinx_Lexer.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
+
+
+def p_result_derivative(p):
+    '''result : DERIVATIVE OF expression
+              | DERIVATIVE OF equation'''
+
+    if s.find('^') != -1:
+        eq = Sphinx_Lexer.formateq(p[3])
+    else:
+        eq = str(p[3])
+    if p[3] is not None:
+        eq = (str(Sphinx_Lexer.newderivative(eq, Sphinx_Lexer.symbols('x'))))
+        eq = Sphinx_Lexer.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
+
+
+def p_result_limit(p):
+    '''result : LIMIT WHEN X GOES expression OF expression
+              | LIMIT WHEN X GOES INFINITY OF expression
+              | LIMIT WHEN X GOES expression OF equation
+              | LIMIT WHEN X GOES INFINITY OF equation'''
+
+    limitOf = str(p[3])
+    tendsTo = str(p[5])
+    eq1 = str(p[7])
+
+    if s.find('^') != -1:
+        eq = Sphinx_Lexer.formateq(eq1)
+    else:
+        eq = str(eq1)
+    if limitOf is not None and tendsTo is not None and p[7] is not None:
+        eq = (str(Sphinx_Lexer.limits(eq, Sphinx_Lexer.symbols('x'), tendsTo)))
+        eq = Sphinx_Lexer.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
+
+
+def p_result_summation(p):
+    '''result : SUMMATION FROM expression TO expression OF expression
+              | SUMMATION FROM expression TO expression OF equation'''
+
+    lowerBound = p[3]
+    highBound = p[5]
+    eq1 = str(p[7])
+    if s.find('^') != -1:
+        eq = Sphinx_Lexer.formateq(eq1)
+    else:
+        eq = str(eq1)
+    if lowerBound is not None and highBound is not None and p[7] is not None:
+        p[0] = Sphinx_Lexer.summation(eq, lowerBound, highBound, Sphinx_Lexer.symbols('x'))
+    else:
+        pass
+
+
+def p_expression_product(p):
+    '''result : PRODUCT FROM expression TO expression OF expression
+              | PRODUCT FROM expression TO expression OF equation'''
+
+    lowerBound = p[3]
+    highBound = p[5]
+    eq1 = str(p[7])
+    if s.find('^') != -1:
+        eq = Sphinx_Lexer.formateq(eq1)
+    else:
+        eq = str(eq1)
+    if lowerBound is not None and highBound is not None and p[7] is not None:
+        p[0] = Sphinx_Lexer.productnotation(eq, lowerBound, highBound, Sphinx_Lexer.symbols('x'))
+    else:
+        pass
+
+
+def p_equation_more(p):
+    '''equation : equation PLUS equation
+                  | equation MINUS equation
+                  | equation TIMES equation
+                  | equation DIVIDE equation
+                  | equation POWER equation
+                  | equation PLUS expression
+                  | equation MINUS expression
+                  | equation TIMES expression
+                  | equation DIVIDE expression
+                  | equation POWER expression
+                  | expression PLUS equation
+                  | expression MINUS equation
+                  | expression TIMES equation
+                  | expression DIVIDE equation
+                  | expression POWER equation'''
+    if p[1] is None or p[3] is None:
+        pass
+    else:
+        p[0] = str(p[1]) + str(p[2]) + str(p[3])
+
+
+def p_equation_complex(p):
+    'equation : X'
+    p[0] = str(p[1])
+
+
+def p_equation_trigonometry(p):
+    '''equation : SIN LPAREN expression RPAREN
+                | SIN LPAREN equation RPAREN
+                | COS LPAREN expression RPAREN
+                | COS LPAREN equation RPAREN
+                | TAN LPAREN expression RPAREN
+                | TAN LPAREN equation RPAREN'''
+    p[0] = str(p[1]) + str(p[2]) + str(p[3]) + str(p[4])
+
+
+def p_equation_group(p):
+    'equation : LPAREN equation RPAREN'
+    print(p[1], p[2], p[3])
+    p[0] = str(p[1]) + str(p[2]) + str(p[3])
+
+
+def p_expression_uminus(p):
+    "expression : MINUS expression %prec UMINUS"
+    p[0] = -p[2]
+
+
+def p_expression_negative(p):
+    "equation : MINUS equation %prec UMINUS"
+    p[0] = str('-') + str(p[2])
+
+
+def p_expression_group(p):
+    "expression : LPAREN expression RPAREN"
+    p[0] = p[2]
+
+
+def p_expression_basic(p):
+    'expression : term'
+    p[0] = p[1]
+
+
+def p_term_number(p):
+    '''term : FLOAT
+            | INT'''
+    p[0] = p[1]
+
+
+def p_expression_name(p):
+    'expression : VAR'
+    try:
+        p[0] = names[p[1]]
+    except LookupError:
+        print("Undefined variable '%s'" % p[1])
+
+
+def p_error(p):
+    if p:
+        print("Syntax error at '%s'" % p.value)
+    else:
+        print("Syntax error at EOF")
+
+import ply.yacc as yacc
+yacc.yacc()
+
+while 1:
+    try:
+        s = raw_input('CASOLUS > ')
+    except EOFError:
+        break
+    if not s:
+        continue
+    yacc.parse(s + '\n')
