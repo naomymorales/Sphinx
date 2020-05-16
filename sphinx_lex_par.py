@@ -1,5 +1,5 @@
-#@authors: Anel Martinez, Naomy Morales, Julibert Diaz, Angel Hernandez
-#Sphinx Programming Language
+# @authors: Anel Martinez, Naomy Morales, Julibert Diaz, Angel Hernandez
+# Sphinx Programming Language
 
 import sys
 import math
@@ -14,7 +14,7 @@ if sys.version_info[0] >= 3:
 
 # Lexer Analysis
 
-#Reserved mathematical words
+# Reserved mathematical words
 reserved = {
     'when': 'WHEN',
     'of': 'OF',
@@ -34,27 +34,10 @@ reserved = {
 }
 
 # Tokens
+tokens = ['CHARACTER', 'VAR', 'FLOAT', 'INT', 'PLUS', 'MINUS', 'MULT', 'DIV',
+          'POWER', 'EQUALS', 'LPAR', 'RPAR', 'COMMA', 'GOES', 'X',] + list(reserved.values())
 
-tokens = [
-             'CHARACTER',
-             'VAR',
-             'FLOAT',
-             'INT',
-             'PLUS',
-             'MINUS',
-             'MULT',
-             'DIV',
-             'POWER',
-             'RAD',
-             'EQUALS',
-             'LPAR',
-             'RPAR',
-             'COMMA',
-             'GOES',
-             'X',
-         ] + list(reserved.values())
-
-#Format For Variables and Token Representation
+# Format For Variables and Token Representation
 t_PLUS = r'\+'
 t_MINUS = r'\-'
 t_MULT = r'\*'
@@ -68,56 +51,61 @@ t_GOES = r'\->'
 t_X = r'[x]'
 t_ignore = " \t"
 
-#Variable
+
+# Variable
 def t_VAR(t):
     r'[a-wyzA-WYZ][a-zA-Z0-9_]*'
     t.type = reserved.get(t.value, 'VAR')  # Check for reserved words
     return t
 
-#String characters
+
+# String characters
 def t_CHARACTER(t):
     r'[a-z A-z_]'
     t.type = reserved.get(t.value, 'CHARACTER')
     return t
-#Floating point
+
+
+# Floating point
 def t_FLOAT(t):
     r'([0-9]+)?([.][0-9]+)([eE][+-]?[0-9]+)?'
     t.value = float(t.value)
     return t
 
-#Radian
+
+# Radian
 def t_RAD(t):
     r'r+a+d'
     t.value = reserved.get(t.value, 'RAD')
     return t
 
 
-#Integer
+# Integer
 def t_INT(t):
     r'[0-9]+'
     t.value = int(t.value)
     return t
 
-#When there is a new line
+
+# When there is a new line
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
 
-#Making comments
+
+# Making comments
 def t_COMMENT(t):
     r'\#.*'
     pass
-    # No return value. Token discarded
 
-#If an error occurs
+
+# If an error occurs
 def t_error(t):
-    print("ERROR: Line %d: LEXER: Illegal character '%s' " % (t.lexer.lineno, t.value[0]))
+    print("ERROR: Line %d: LEXER: Illegal character '%s'!! " % (t.lexer.lineno, t.value[0]))
     t.lexer.skip(1)
 
 
-# Build the lexer
-
-
+# LEXER BUILD
 lex.lex()
 
 # Parsing rules and precedence
@@ -125,22 +113,23 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'MULT', 'DIV'),
     ('left', 'POWER'),
-    ('right', 'UMINUS'),
+    ('right', 'SIGN'),
 )
 
-# dictionary to store the variable name and value
 names = {}
 
-#Printing variables
-def p_print_var_list(p):
+#STATEMENTS
+# Printing variables
+def p_list(p):
     '''statement : PRINTLIST '''
     if len(names) is not 0:
-        for k, v in names.items():
-            print(k, "=", v)
+        for keys, values in names.items():
+            print(keys, "=", values)
     else:
-        print("There are no variables in the system.")
+        print("Names is 0 :(")
 
-#Assigning variables
+
+# Assigning variables
 def p_assign_state(p):
     '''statement : VAR EQUALS expression
                  | VAR EQUALS equation
@@ -150,7 +139,8 @@ def p_assign_state(p):
     else:
         names[p[1]] = p[3]
 
-#What is a statement?
+
+# What is a statement?
 def p_expr_statement(p):
     '''statement : expression
                  | equation
@@ -160,7 +150,17 @@ def p_expr_statement(p):
     else:
         print(p[1])
 
-#Defining polynomials
+#EXPRESSIONS
+# An expression can be a variable
+def p_expression_name(p):
+    'expression : VAR'
+    try:
+        p[0] = names[p[1]]
+    except LookupError:
+        print("Undefined variable '%s'" % p[1])
+
+
+# Defining polynomials
 def p_polynomial(p):
     '''expression : expression PLUS expression
                   | expression MINUS expression
@@ -195,7 +195,8 @@ def p_polynomial(p):
         else:
             p[0] = math.pow(p[1], p[3])
 
-#Defining a quadratic function
+
+# Defining a quadratic function
 def p_quadratic(p):
     '''expression : FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER PLUS FLOAT
                   | FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER MINUS FLOAT
@@ -212,7 +213,8 @@ def p_quadratic(p):
     else:
         pass
 
-#Expressing coordinates in the grammar rules
+
+# Expressing coordinates in the grammar rules
 def p_coordinates_exp(p):
     '''expression : LPAR FLOAT COMMA FLOAT RPAR'''
     if p[2] is not None and p[4] is not None:
@@ -220,7 +222,34 @@ def p_coordinates_exp(p):
     else:
         pass
 
-#Representing a quadratic result
+
+# Expression encased in parenthesis
+def p_expression_group(p):
+    "expression : LPAR expression RPAR"
+    p[0] = p[2]
+
+
+# reverses sign
+def p_expression_sign(p):
+    "expression : MINUS expression %prec SIGN"
+    p[0] = -p[2]
+
+
+# Simple expression
+def p_expression_basic(p):
+    'expression : term'
+    p[0] = p[1]
+
+
+
+
+#TERM
+def p_term(p):
+    '''term : FLOAT
+            | INT'''
+    p[0] = p[1]
+
+# Representing a quadratic result
 def p_quadratic_result(p):
     '''result : FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER PLUS FLOAT
                   | FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER MINUS FLOAT
@@ -231,65 +260,68 @@ def p_quadratic_result(p):
         b = str(p[6])
         c = str(p[9])
         eq = (str(Math_Functions_V2.Quadratic(a, b, c)))
-        eq = Math_Functions_V2.reformateq(eq)
+        eq = Math_Functions_V2.reformat(eq)
         p[0] = eq
     else:
         pass
 
-#Integrals
+
+# Integrals
 def p_result_integral(p):
     '''result : INTEGRAL OF expression
                    | INTEGRAL OF equation'''
 
     if s.find('^') != -1:
-        eq = Math_Functions_V2.formateq(p[3])
+        equation = Math_Functions_V2.format(p[3])
     else:
-        eq = str(p[3])
+        equation = str(p[3])
     if p[3] is not None:
-        eq = (str(Math_Functions_V2.newintegration(eq, Math_Functions_V2.symbols('x'))))
-        eq = Math_Functions_V2.reformateq(eq)
-        p[0] = eq
+        equation = (str(Math_Functions_V2.integration(equation, Math_Functions_V2.symbols('x'))))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
     else:
         pass
 
 
-def p_result_definite_integral(p):
+def p_result_integral_definida(p):
     '''result : INTEGRAL FROM expression TO expression OF expression
               | INTEGRAL FROM expression TO expression OF equation
               | INTEGRAL FROM expression TO INFINITY OF expression
               | INTEGRAL FROM expression TO INFINITY OF equation'''
 
-    lower = str(p[3])
-    high = str(p[5])
-    eq1 = str(p[7])
+    lowerLimit = str(p[3])
+    upperLimit = str(p[5])
+    firstEquation = str(p[7])
     if s.find('^') != -1:
-        eq = Math_Functions_V2.formateq(eq1)
+        equation = Math_Functions_V2.format(firstEquation)
     else:
-        eq = str(eq1)
-    if lower is not None and high is not None and p[7] is not None:
-        eq = (str(Math_Functions_V2.newintegration(eq, (Math_Functions_V2.symbols('x'), lower, high))))
-        eq = Math_Functions_V2.reformateq(eq)
-        p[0] = eq
+        equation = str(firstEquation)
+    if lowerLimit is not None and upperLimit is not None and p[7] is not None:
+        equation = (str(Math_Functions_V2.integration(equation, (Math_Functions_V2.symbols('x'), lowerLimit, upperLimit))))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
     else:
         pass
 
-#Defining derivatives
-def p_result_derivative(p):
+
+# Defining derivatives
+def p_result_derivation(p):
     '''result : DERIVATIVE OF expression
               | DERIVATIVE OF equation'''
 
     if s.find('^') != -1:
-        eq = Math_Functions_V2.formateq(p[3])
+        equation = Math_Functions_V2.format(p[3])
     else:
-        eq = str(p[3])
+        equation = str(p[3])
     if p[3] is not None:
-        eq = (str(Math_Functions_V2.newderivative(eq, Math_Functions_V2.symbols('x'))))
-        eq = Math_Functions_V2.reformateq(eq)
-        p[0] = eq
+        equation = (str(Math_Functions_V2.derivation(equation, Math_Functions_V2.symbols('x'))))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
     else:
         pass
 
-#Limits
+
+# Limits
 def p_result_limit(p):
     '''result : LIMIT WHEN X GOES expression OF expression
               | LIMIT WHEN X GOES INFINITY OF expression
@@ -298,37 +330,39 @@ def p_result_limit(p):
 
     limit = str(p[3])
     tendency = str(p[5])
-    eq1 = str(p[7])
+    firstEquation = str(p[7])
 
     if s.find('^') != -1:
-        eq = Math_Functions_V2.formateq(eq1)
+        equation = Math_Functions_V2.format(firstEquation)
     else:
-        eq = str(eq1)
+        equation = str(firstEquation)
     if limit is not None and tendency is not None and p[7] is not None:
-        eq = (str(Math_Functions_V2.limits(eq, Math_Functions_V2.symbols('x'), tendency)))
-        eq = Math_Functions_V2.reformateq(eq)
-        p[0] = eq
+        equation = (str(Math_Functions_V2.limits(equation, Math_Functions_V2.symbols('x'), tendency)))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
     else:
         pass
+
 
 # Defining a Summation
 def p_result_summation(p):
     '''result : SUMMATION FROM expression TO expression OF expression
               | SUMMATION FROM expression TO expression OF equation'''
 
-    lower = p[3]
-    high = p[5]
-    eq1 = str(p[7])
+    base = p[3]
+    limitOf = p[5]
+    firstEquation = str(p[7])
     if s.find('^') != -1:
-        eq = Math_Functions_V2.formateq(eq1)
+        equation = Math_Functions_V2.format(firstEquation)
     else:
-        eq = str(eq1)
-    if lower is not None and high is not None and p[7] is not None:
-        p[0] = Math_Functions_V2.summation(eq, lower, high, Math_Functions_V2.symbols('x'))
+        equation = str(firstEquation)
+    if base is not None and limitOf is not None and p[7] is not None:
+        p[0] = Math_Functions_V2.summation(equation, base, limitOf, Math_Functions_V2.symbols('x'))
     else:
         pass
 
-#Defining a factorial
+
+# Defining a factorial
 def p_result_factorial(p):
     '''result : INT'''
     if p[1] is not None:
@@ -337,8 +371,9 @@ def p_result_factorial(p):
     else:
         pass
 
+
 # def p_result_CartToPolar(p):
-#     '''result : LPAREN FLOAT COMMMA FLOAT RPAREN'''
+#     '''result : LPAR FLOAT COMMA FLOAT RPAR'''
 #     if p[2] is not None and p[4] is not None:
 #         x = p[2]
 #         y = p[4]
@@ -346,20 +381,21 @@ def p_result_factorial(p):
 #     else:
 #         pass
 
-#Defining the conversion of polar to cartesian
+# Defining the conversion of polar to cartesian
 def p_result_PolarToCart(p):
     '''result : LPAR FLOAT COMMA FLOAT RPAR'''
     if p[2] is not None and p[4] is not None:
         x = p[2]
         y = p[4]
         if Math_Functions_V2.Cartersian_To_Polar():
-            p[0] = Math_Functions_V2.Cartersian_To_Polar(x,y)
+            p[0] = Math_Functions_V2.Cartersian_To_Polar(x, y)
         elif Math_Functions_V2.Polar_To_Cartersian():
-            p[0] = Math_Functions_V2.Polar_To_Cartersian(x,y)
+            p[0] = Math_Functions_V2.Polar_To_Cartersian(x, y)
     else:
         pass
 
-#Defining the conversion of degress to radians
+
+# Defining the conversion of degress to radians
 def p_result_DegToRads(p):
     '''result : FLOAT'''
     if p[1] is not None:
@@ -380,7 +416,7 @@ def p_result_DegToRads(p):
 #     else:
 #         pass
 
-#Defining magnitude function
+# Defining magnitude function
 def p_result_magnitude(p):
     '''result : FLOAT FLOAT'''
     if p[1] is not None and p[2] is not None:
@@ -390,7 +426,8 @@ def p_result_magnitude(p):
     else:
         pass
 
-#Defining magnitude function for 3 variables
+
+# Defining magnitude function for 3 variables
 
 def p_result_MagnitudeOfThree(p):
     '''result : FLOAT FLOAT FLOAT'''
@@ -398,11 +435,12 @@ def p_result_MagnitudeOfThree(p):
         x = p[1]
         y = p[2]
         z = p[3]
-        p[0] = Math_Functions_V2.Magnitude(x, y, z)
+        p[0] = Math_Functions_V2.Magnitude_With_3_Variables(x, y, z)
     else:
         pass
 
-#Defining distance
+
+# Defining distance
 def p_result_DistanceBetweenTwo(p):
     '''result : FLOAT FLOAT FLOAT FLOAT'''
     if p[1] is not None and p[2] is not None and p[3] is not None and p[4] is not None:
@@ -414,25 +452,28 @@ def p_result_DistanceBetweenTwo(p):
     else:
         pass
 
+
 # Rule for a product
-def p_expression_product(p):
+def p_product_exp(p):
     '''result : PRODUCT FROM expression TO expression OF expression
               | PRODUCT FROM expression TO expression OF equation'''
 
-    lower = p[3]
-    high = p[5]
-    eq1 = str(p[7])
+    base = p[3]
+    limitOf = p[5]
+    firstEquation = str(p[7])
     if s.find('^') != -1:
-        eq = Math_Functions_V2.formateq(eq1)
+        equation = Math_Functions_V2.format(firstEquation)
     else:
-        eq = str(eq1)
-    if lower is not None and high is not None and p[7] is not None:
-        p[0] = Math_Functions_V2.productnotation(eq, lower, high, Math_Functions_V2.symbols('x'))
+        equation = str(firstEquation)
+    if base is not None and limitOf is not None and p[7] is not None:
+        p[0] = Math_Functions_V2.notationProduct(equation, base, limitOf, Math_Functions_V2.symbols('x'))
     else:
         pass
 
-#Defining an equation
-def p_equation_more(p):
+
+#EQUATION
+# Defining an equation
+def p_equation_additions(p):
     '''equation : equation PLUS equation
                   | equation MINUS equation
                   | equation MULT equation
@@ -453,13 +494,15 @@ def p_equation_more(p):
     else:
         p[0] = str(p[1]) + str(p[2]) + str(p[3])
 
-#Rule for a complex equation
+
+# Rule for a complex equation
 def p_equation_complex(p):
     'equation : X'
     p[0] = str(p[1])
 
-#Rule for a trigonometric equation
-def p_equation_trigonometry(p):
+
+# Rule for a trigonometric equation
+def p_trigonometry(p):
     '''equation : SIN LPAR expression RPAR
                 | SIN LPAR equation RPAR
                 | COS LPAR expression RPAR
@@ -468,64 +511,44 @@ def p_equation_trigonometry(p):
                 | TAN LPAR equation RPAR'''
     p[0] = str(p[1]) + str(p[2]) + str(p[3]) + str(p[4])
 
-#Equation encased in parenthesis
+
+# Equation encased in parenthesis
 def p_equation_group(p):
     'equation : LPAR equation RPAR'
     print(p[1], p[2], p[3])
     p[0] = str(p[1]) + str(p[2]) + str(p[3])
 
-#Uminus-reverses sign
-def p_expression_uminus(p):
-    "expression : MINUS expression %prec UMINUS"
-    p[0] = -p[2]
 
-#Rule for a negative expression
+# Rule for a negative expression
 def p_expression_negative(p):
-    "equation : MINUS equation %prec UMINUS"
+    "equation : MINUS equation %prec SIGN"
     p[0] = str('-') + str(p[2])
 
-#Expression encased in parenthesis
-def p_expression_group(p):
-    "expression : LPAR expression RPAR"
-    p[0] = p[2]
 
-#Simple expression
-def p_expression_basic(p):
-    'expression : term'
-    p[0] = p[1]
-
-#Term
-def p_term_number(p):
-    '''term : FLOAT
-            | INT'''
-    p[0] = p[1]
-
-#An expression can be a variable
-def p_expression_name(p):
-    'expression : VAR'
-    try:
-        p[0] = names[p[1]]
-    except LookupError:
-        print("Undefined variable '%s'" % p[1])
-
-#If an error occurs
+#ERROR
+# If an error occurs
 def p_error(p):
     if p:
         print("There is a syntax error at '%s'" % p.value)
     else:
         print("There is a syntax error at EOF")
 
-#Parser Run
+
+# Parser Run
 
 
 yacc.yacc()
 
-#Testing
+# Testing
 while 1:
     try:
-        s = raw_input('Sphinx > ')
+        s = raw_input('Sphinx : ')
     except EOFError:
         break
     if not s:
         continue
     yacc.parse(s + '\n')
+
+
+#######NOTES:
+#######THERE ARE STILL SOME OTHER FUNCTIONS THAT NEED SOME TWEEKING AND SOME REMAIN WANTED TO BE ADDED#######
