@@ -215,3 +215,119 @@ def p_coordinates_exp(p):
         pass
 
 
+def p_result_quadratic(p):
+    '''result : FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER PLUS FLOAT
+                  | FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER MINUS FLOAT
+                  | FLOAT CHARACTER POWER INT MINUS FLOAT CHARACTER PLUS FLOAT
+                  | FLOAT CHARACTER POWER INT MINUS FLOAT CHARACTER MINUS FLOAT'''
+    if p[2] == p[7] and p[4] == 2:
+        a = str(p[1])
+        b = str(p[6])
+        c = str(p[9])
+        eq = (str(Math_Functions_V2.Quadratic(a, b, c)))
+        eq = Math_Functions_V2.reformateq(eq)
+        p[0] = eq
+    else:
+        pass
+
+
+# def p_result_integral(p):
+#     '''result : INTEGRAL OF expression
+#                    | INTEGRAL OF equation'''
+#
+#     if s.find('^') != -1:
+#         eq = Math_Functions_V2.formateq(p[3])
+#     else:
+#         eq = str(p[3])
+#     if p[3] is not None:
+#         eq = (str(Math_Functions_V2.newintegration(eq, Math_Functions_V2.symbols('x'))))
+#         eq = Math_Functions_V2.reformateq(eq)
+#         p[0] = eq
+#     else:
+#         pass
+#
+#
+# def p_result_definite_integral(p):
+#     '''result : INTEGRAL FROM expression TO expression OF expression
+#               | INTEGRAL FROM expression TO expression OF equation
+#               | INTEGRAL FROM expression TO INFINITY OF expression
+#               | INTEGRAL FROM expression TO INFINITY OF equation'''
+#
+#     lowerbound = str(p[3])
+#     highbound = str(p[5])
+#     eq1 = str(p[7])
+#     if s.find('^') != -1:
+#         eq = Math_Functions_V2.formateq(eq1)
+#     else:
+#         eq = str(eq1)
+#     if lowerbound is not None and highbound is not None and p[7] is not None:
+#         eq = (str(Math_Functions_V2.newintegration(eq, (Math_Functions_V2.symbols('x'), lowerbound, highbound))))
+#         eq = Math_Functions_V2.reformateq(eq)
+#         p[0] = eq
+#     else:
+#         pass
+#
+#
+# def p_result_derivative(p):
+#     '''result : DERIVATIVE OF expression
+#               | DERIVATIVE OF equation'''
+#
+#     if s.find('^') != -1:
+#         eq = Math_Functions_V2.formateq(p[3])
+#     else:
+#         eq = str(p[3])
+#     if p[3] is not None:
+#         eq = (str(Math_Functions_V2.newderivative(eq, Math_Functions_V2.symbols('x'))))
+#         eq = Math_Functions_V2.reformateq(eq)
+#         p[0] = eq
+#     else:
+#         pass
+#
+#
+# def p_result_limit(p):
+#     '''result : LIMIT WHEN X GOES expression OF expression
+#               | LIMIT WHEN X GOES INFINITY OF expression
+#               | LIMIT WHEN X GOES expression OF equation
+#               | LIMIT WHEN X GOES INFINITY OF equation'''
+#
+#     limitOf = str(p[3])
+#     tendsTo = str(p[5])
+#     eq1 = str(p[7])
+#
+#     if s.find('^') != -1:
+#         eq = Math_Functions_V2.formateq(eq1)
+#     else:
+#         eq = str(eq1)
+#     if limitOf is not None and tendsTo is not None and p[7] is not None:
+#         eq = (str(Math_Functions_V2.limits(eq, Math_Functions_V2.symbols('x'), tendsTo)))
+#         eq = Math_Functions_V2.reformateq(eq)
+#         p[0] = eq
+#     else:
+#         pass
+#
+#
+# def p_result_summation(p):
+#     '''result : SUMMATION FROM expression TO expression OF expression
+#               | SUMMATION FROM expression TO expression OF equation'''
+#
+#     lowerBound = p[3]
+#     highBound = p[5]
+#     eq1 = str(p[7])
+#     if s.find('^') != -1:
+#         eq = Math_Functions_V2.formateq(eq1)
+#     else:
+#         eq = str(eq1)
+#     if lowerBound is not None and highBound is not None and p[7] is not None:
+#         p[0] = Math_Functions_V2.summation(eq, lowerBound, highBound, Math_Functions_V2.symbols('x'))
+#     else:
+#         pass
+
+
+def p_result_factorial(p):
+    '''result : INT'''
+    if p[1] is not None:
+        n = p[1]
+        p[0] = Math_Functions_V2.Factorial(n)
+    else:
+        pass
+
