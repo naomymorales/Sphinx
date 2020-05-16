@@ -80,7 +80,7 @@ def t_FLOAT(t):
     t.value = float(t.value)
     return t
 
-
+#Radian
 def t_RAD(t):
     r'r+a+d'
     t.value = reserved.get(t.value, 'RAD')
