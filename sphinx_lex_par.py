@@ -1,6 +1,6 @@
 import sys
 import math
-import Sphinx_Lexer
+import Math_Functions_V2
 
 sys.path.insert(0, "../..")
 

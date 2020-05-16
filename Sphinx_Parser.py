@@ -1,6 +1,6 @@
 import sys
 import math
-import Sphinx_Lexer
+import Math_Functions_V2
 
 sys.path.insert(0, "../..")
 
@@ -183,12 +183,12 @@ def p_result_integral(p):
                    | INTEGRAL OF equation'''
 
     if s.find('^') != -1:
-        eq = Sphinx_Lexer.formateq(p[3])
+        eq = Math_Functions_V2.formateq(p[3])
     else:
         eq = str(p[3])
     if p[3] is not None:
-        eq = (str(Sphinx_Lexer.newintegration(eq, Sphinx_Lexer.symbols('x'))))
-        eq = Sphinx_Lexer.reformateq(eq)
+        eq = (str(Math_Functions_V2.newintegration(eq, Math_Functions_V2.symbols('x'))))
+        eq = Math_Functions_V2.reformateq(eq)
         p[0] = eq
     else:
         pass
@@ -204,12 +204,12 @@ def p_result_definite_integral(p):
     highbound = str(p[5])
     eq1 = str(p[7])
     if s.find('^') != -1:
-        eq = Sphinx_Lexer.formateq(eq1)
+        eq = Math_Functions_V2.formateq(eq1)
     else:
         eq = str(eq1)
     if lowerbound is not None and highbound is not None and p[7] is not None:
-        eq = (str(Sphinx_Lexer.newintegration(eq, (Sphinx_Lexer.symbols('x'), lowerbound, highbound))))
-        eq = Sphinx_Lexer.reformateq(eq)
+        eq = (str(Math_Functions_V2.newintegration(eq, (Math_Functions_V2.symbols('x'), lowerbound, highbound))))
+        eq = Math_Functions_V2.reformateq(eq)
         p[0] = eq
     else:
         pass
@@ -220,12 +220,12 @@ def p_result_derivative(p):
               | DERIVATIVE OF equation'''
 
     if s.find('^') != -1:
-        eq = Sphinx_Lexer.formateq(p[3])
+        eq = Math_Functions_V2.formateq(p[3])
     else:
         eq = str(p[3])
     if p[3] is not None:
-        eq = (str(Sphinx_Lexer.newderivative(eq, Sphinx_Lexer.symbols('x'))))
-        eq = Sphinx_Lexer.reformateq(eq)
+        eq = (str(Math_Functions_V2.newderivative(eq, Math_Functions_V2.symbols('x'))))
+        eq = Math_Functions_V2.reformateq(eq)
         p[0] = eq
     else:
         pass
@@ -242,12 +242,12 @@ def p_result_limit(p):
     eq1 = str(p[7])
 
     if s.find('^') != -1:
-        eq = Sphinx_Lexer.formateq(eq1)
+        eq = Math_Functions_V2.formateq(eq1)
     else:
         eq = str(eq1)
     if limitOf is not None and tendsTo is not None and p[7] is not None:
-        eq = (str(Sphinx_Lexer.limits(eq, Sphinx_Lexer.symbols('x'), tendsTo)))
-        eq = Sphinx_Lexer.reformateq(eq)
+        eq = (str(Math_Functions_V2.limits(eq, Math_Functions_V2.symbols('x'), tendsTo)))
+        eq = Math_Functions_V2.reformateq(eq)
         p[0] = eq
     else:
         pass
@@ -261,11 +261,11 @@ def p_result_summation(p):
     highBound = p[5]
     eq1 = str(p[7])
     if s.find('^') != -1:
-        eq = Sphinx_Lexer.formateq(eq1)
+        eq = Math_Functions_V2.formateq(eq1)
     else:
         eq = str(eq1)
     if lowerBound is not None and highBound is not None and p[7] is not None:
-        p[0] = Sphinx_Lexer.summation(eq, lowerBound, highBound, Sphinx_Lexer.symbols('x'))
+        p[0] = Math_Functions_V2.summation(eq, lowerBound, highBound, Math_Functions_V2.symbols('x'))
     else:
         pass
 
@@ -278,11 +278,11 @@ def p_expression_product(p):
     highBound = p[5]
     eq1 = str(p[7])
     if s.find('^') != -1:
-        eq = Sphinx_Lexer.formateq(eq1)
+        eq = Math_Functions_V2.formateq(eq1)
     else:
         eq = str(eq1)
     if lowerBound is not None and highBound is not None and p[7] is not None:
-        p[0] = Sphinx_Lexer.productnotation(eq, lowerBound, highBound, Sphinx_Lexer.symbols('x'))
+        p[0] = Math_Functions_V2.productnotation(eq, lowerBound, highBound, Math_Functions_V2.symbols('x'))
     else:
         pass
 
