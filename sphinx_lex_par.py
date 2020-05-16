@@ -7,7 +7,7 @@ sys.path.insert(0, "../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-# LEXER ANALYSIS
+# Lexer Analysis
 
 
 reserved = {
