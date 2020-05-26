@@ -1,1 +1,2 @@
-#Interpreter used Python 3.8
+#@authors: Anel Martinez, Naomy Morales, Julibert Diaz, Angel Hernandez
+#Sphinx Programming Language
