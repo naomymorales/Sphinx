@@ -140,7 +140,7 @@ def p_assign_state(p):
         names[p[1]] = p[3]
 
 
-# What is a statement?
+# Defining Statement
 def p_expr_statement(p):
     '''statement : expression
                  | equation
@@ -198,10 +198,10 @@ def p_polynomial(p):
 
 # Defining a quadratic function
 def p_quadratic(p):
-    '''expression : FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER PLUS FLOAT
-                  | FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER MINUS FLOAT
-                  | FLOAT CHARACTER POWER INT MINUS FLOAT CHARACTER PLUS FLOAT
-                  | FLOAT CHARACTER POWER INT MINUS FLOAT CHARACTER MINUS FLOAT'''
+    '''expression : term CHARACTER POWER term PLUS term CHARACTER PLUS term
+                  | term CHARACTER POWER term PLUS term CHARACTER MINUS term
+                  | term CHARACTER POWER term MINUS term CHARACTER PLUS term
+                  | term CHARACTER POWER term MINUS term CHARACTER MINUS term'''
     if p[4] == 2 and p[2] == p[7] and p[5] == '+' and p[8] == '+':
         p[0] = str(p[1]) + str(p[2]) + str(p[3]) + str(p[4]) + str(p[5]) + str(p[6]) + str(p[7]) + str(p[8]) + str(p[9])
     elif p[4] == 2 and p[2] == p[7] and p[5] == '+' and p[8] == '-':
@@ -216,7 +216,7 @@ def p_quadratic(p):
 
 # Expressing coordinates in the grammar rules
 def p_coordinates_exp(p):
-    '''expression : LPAR FLOAT COMMA FLOAT RPAR'''
+    '''expression : LPAR term COMMA term RPAR'''
     if p[2] is not None and p[4] is not None:
         p[0] = str(p[1]) + str(p[2]) + str(p[3]) + str(p[4]) + str(p[5])
     else:
@@ -251,10 +251,10 @@ def p_term(p):
 
 # Representing a quadratic result
 def p_quadratic_result(p):
-    '''result : FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER PLUS FLOAT
-                  | FLOAT CHARACTER POWER INT PLUS FLOAT CHARACTER MINUS FLOAT
-                  | FLOAT CHARACTER POWER INT MINUS FLOAT CHARACTER PLUS FLOAT
-                  | FLOAT CHARACTER POWER INT MINUS FLOAT CHARACTER MINUS FLOAT'''
+    '''result : term CHARACTER POWER term PLUS term CHARACTER PLUS term
+                  | term CHARACTER POWER term PLUS term CHARACTER MINUS term
+                  | term CHARACTER POWER term MINUS term CHARACTER PLUS term
+                  | term CHARACTER POWER term MINUS term CHARACTER MINUS term'''
     if p[2] == p[7] and p[4] == 2:
         a = str(p[1])
         b = str(p[6])
@@ -383,7 +383,7 @@ def p_result_factorial(p):
 
 # Defining the conversion of polar to cartesian
 def p_result_PolarToCart(p):
-    '''result : LPAR FLOAT COMMA FLOAT RPAR'''
+    '''result : LPAR term COMMA term RPAR'''
     if p[2] is not None and p[4] is not None:
         x = p[2]
         y = p[4]
@@ -397,7 +397,7 @@ def p_result_PolarToCart(p):
 
 # Defining the conversion of degress to radians
 def p_result_DegToRads(p):
-    '''result : FLOAT'''
+    '''result : term'''
     if p[1] is not None:
         x = p[1]
         if Math_Functions_V2.Degrees_To_Radians():
@@ -418,7 +418,7 @@ def p_result_DegToRads(p):
 
 # Defining magnitude function
 def p_result_magnitude(p):
-    '''result : FLOAT FLOAT'''
+    '''result : term term'''
     if p[1] is not None and p[2] is not None:
         x = p[1]
         y = p[2]
@@ -430,7 +430,7 @@ def p_result_magnitude(p):
 # Defining magnitude function for 3 variables
 
 def p_result_MagnitudeOfThree(p):
-    '''result : FLOAT FLOAT FLOAT'''
+    '''result : term term term'''
     if p[1] is not None and p[2] is not None and p[3] is not None:
         x = p[1]
         y = p[2]
@@ -442,7 +442,7 @@ def p_result_MagnitudeOfThree(p):
 
 # Defining distance
 def p_result_DistanceBetweenTwo(p):
-    '''result : FLOAT FLOAT FLOAT FLOAT'''
+    '''result : term term term term'''
     if p[1] is not None and p[2] is not None and p[3] is not None and p[4] is not None:
         x1 = p[1]
         y1 = p[2]
