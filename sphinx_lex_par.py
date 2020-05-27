@@ -403,7 +403,7 @@ def p_result_derivation(p):
         pass
 
 
-# Limits
+# Limit
 def p_result_limit(p):
     '''result : LIMIT WHEN X GOES expression OF expression
               | LIMIT WHEN X GOES INFINITY OF expression
