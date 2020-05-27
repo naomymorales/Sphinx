@@ -73,13 +73,6 @@ def t_FLOAT(t):
     return t
 
 
-# Radian
-def t_RAD(t):
-    r'r+a+d'
-    t.value = reserved.get(t.value, 'RAD')
-    return t
-
-
 # Integer
 def t_INT(t):
     r'[0-9]+'
@@ -249,6 +242,7 @@ def p_term(p):
             | INT'''
     p[0] = p[1]
 
+#RESULTS
 # Representing a quadratic result
 def p_quadratic_result(p):
     '''result : term CHARACTER POWER term PLUS term CHARACTER PLUS term
@@ -264,6 +258,94 @@ def p_quadratic_result(p):
         p[0] = eq
     else:
         pass
+
+
+#Volume
+def p_volume_result_sphere(p):
+    '''result : term MULT term MULT VAR POWER term DIV term'''
+    if p[1] == 4 and p[3] == math.pi and p[6] == 3 and p[8] == 3:
+        a = str(p[5])
+        b = 0
+        c = 0
+        equation = (str(Math_Functions_V2.SurfaceArea("sphere", a, b, c)))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
+    else:
+        pass
+
+
+def p_volume_result_cone(p):
+    '''result : term MULT VAR POWER VAR DIV term'''
+    if p[1] == math.pi and p[4] == 2 and p[7] == 3:
+        a = str(p[4])
+        b = str(p[5])
+        c = 0
+        equation = (str(Math_Functions_V2.SurfaceArea("cone", a, b, c)))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
+    else:
+        pass
+
+def p_volume_result_cube(p):
+    '''result : VAR POWER term'''
+    if p[3] == 3:
+        a = str(p[1])
+        b = 0
+        c = 0
+        equation = (str(Math_Functions_V2.SurfaceArea("cube", a, b, c)))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
+    else:
+        pass
+
+def p_volume_result_cylinder(p):
+    '''result : term VAR POWER term VAR'''
+    if p[1] == math.pi and p[4] == 2:
+        a = str(p[2])
+        b = str(p[5])
+        c = 0
+        equation = (str(Math_Functions_V2.SurfaceArea("cylinder", a, b, c)))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
+    else:
+        pass
+
+def p_volume_result_spyramid(p):
+    '''result : VAR POWER term VAR DIV term'''
+    if p[3] == 2 and p[6] == 3:
+        a = str(p[1])
+        b = str(p[4])
+        c = 0
+        equation = (str(Math_Functions_V2.SurfaceArea("square pyramid", a, b, c)))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
+    else:
+        pass
+
+def p_volume_result_tube(p):
+    '''result : term LPAR VAR POWER term MINUS VAR RPAR DIV term'''
+    if p[1] == math.pi and p[5] == 2 and p[10] == 4:
+        a = str(p[5])
+        b = 0
+        c = 0
+        equation = (str(Math_Functions_V2.SurfaceArea("tube", a, b, c)))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
+    else:
+        pass
+
+def p_volume_result_capsule(p):
+    '''result : term MULT term MULT VAR POWER term DIV term'''
+    if p[1] == 4 and p[3] == math.pi and p[6] == 3 and p[8] == 3:
+        a = str(p[5])
+        b = 0
+        c = 0
+        equation = (str(Math_Functions_V2.SurfaceArea("sphere", a, b, c)))
+        equation = Math_Functions_V2.reformat(equation)
+        p[0] = equation
+    else:
+        pass
+
 
 
 # Integrals

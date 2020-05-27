@@ -188,36 +188,36 @@ def reformat(equation):
         tired = tired.replace("**", "^")
         return tired
 
-# For testing purposes
-# '''
-# print("derivations testing\n")
-# # parameters: equation, *symbols
-# print(newderivative('1/(x**2)'))
-# # If there's more than one variable in the exp, the variable(s) of differentiation must be supplied to differentiate
-# print(newderivative('4*x*2*y*2', symbols('x')))
-# print('\nIntegrating testing\n')
-# # parameters: equation, *symbols
-# print('indefinite integral ', newintegration('2',symbols('x')))
-# # parameters: equation, *tuple(symbol, lowerbound, upperbound)
-# print('definite integral ', newintegration('2*x', (symbols('x'), 0, 2)))
-# # If the integrand contains more than one free symbol, an integration variable should be supplied explicitly
-# # parameters: equation, *symbols
-# print('indefinite integral ', newintegration('2*x*2*y + 2*x*y*2', symbols('x'), symbols('y')))
-# # parameters: equation, *tuple(symbol, lowerbound, upperbound)
-# print('definite integral ', newintegration('2*x*2*y + 2*x*y*2', (symbols('x'), 0, 2), (symbols('y'), 0, 2)))
-# # variable to be replaced must be initialized as a symbol and sent as a parameter for these methods to work
-# # parameters: equation, lowerbound, upperbound, symbol
-# print('\ntesting summation\n')
-# print(summation('x**2', 0, 6, symbols('x')))
-# print('\ntesting product notation\n')
-# print(productnotation('x**2', 1, 6, symbols('x')))
-# print('\ntesting limits\n')
-# # parameters: equation, x, x0, side to evaluate
-# print(limits('1/x', symbols('x'), 0, '+'))
-# print(limits('1/x', symbols('x'), 'inf'))
-# # testing string replacing for exponent
-# print('\ntesting formatting\n')
-# str1 = "4x^2"
-# print(str1.replace("^", "**"))
-# print(formateq("4x^2"))
-# '''
+#For testing purposes
+'''
+print("derivations testing\n")
+# parameters: equation, *symbols
+print(newderivative('1/(x**2)'))
+# If there's more than one variable in the exp, the variable(s) of differentiation must be supplied to differentiate
+print(newderivative('4*x*2*y*2', symbols('x')))
+print('\nIntegrating testing\n')
+# parameters: equation, *symbols
+print('indefinite integral ', newintegration('2',symbols('x')))
+# parameters: equation, *tuple(symbol, lowerbound, upperbound)
+print('definite integral ', newintegration('2*x', (symbols('x'), 0, 2)))
+# If the integrand contains more than one free symbol, an integration variable should be supplied explicitly
+# parameters: equation, *symbols
+print('indefinite integral ', newintegration('2*x*2*y + 2*x*y*2', symbols('x'), symbols('y')))
+# parameters: equation, *tuple(symbol, lowerbound, upperbound)
+print('definite integral ', newintegration('2*x*2*y + 2*x*y*2', (symbols('x'), 0, 2), (symbols('y'), 0, 2)))
+# variable to be replaced must be initialized as a symbol and sent as a parameter for these methods to work
+# parameters: equation, lowerbound, upperbound, symbol
+print('\ntesting summation\n')
+print(summation('x**2', 0, 6, symbols('x')))
+print('\ntesting product notation\n')
+print(productnotation('x**2', 1, 6, symbols('x')))
+print('\ntesting limits\n')
+# parameters: equation, x, x0, side to evaluate
+print(limits('1/x', symbols('x'), 0, '+'))
+print(limits('1/x', symbols('x'), 'inf'))
+# testing string replacing for exponent
+print('\ntesting formatting\n')
+str1 = "4x^2"
+print(str1.replace("^", "**"))
+print(formateq("4x^2"))
+'''
